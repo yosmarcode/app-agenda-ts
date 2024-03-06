@@ -1,22 +1,15 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { AiTwotoneDelete } from 'react-icons/ai'
 import { FaUserAlt } from 'react-icons/fa'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import TitleComponents from '../../components/TitleComponents/TitleComponents'
 import BtnNewRecord from './components/Bottom/BtnNewRecord'
 import { TblList } from './components/Table/TblList'
 import { Avatar, Space, TableProps } from 'antd'
 import { InputSearch } from './components/Search/InputSearch'
-import { webApiService } from '../../services'
 
-export interface IDataType {
-    key: string;
-    id: number;
-    fullName: string;
-    descriptions: string;
-    email: string;
-    phone: string;
-    avatar: string
-  }
+import { IDataType } from './models'
+import { usePageContextAgenda } from './context/PageContextAgenda'
 
 export const dataColumns: TableProps<IDataType>['columns'] = [
   {
@@ -25,8 +18,8 @@ export const dataColumns: TableProps<IDataType>['columns'] = [
     key: 'fullName',
     render: (_, x) => (
       <Space size='middle'>
-        <Avatar size={64} icon={x.avatar ? (<FaUserAlt />) : ''} src={x.avatar} />
-        <span>{x.fullName}</span>
+        <Avatar size={36} icon={x.avatar ? (<FaUserAlt />) : ''} src={x.avatar} />
+        <a>{x.fullName}</a>
       </Space>
     )
   },
@@ -59,26 +52,13 @@ export const dataColumns: TableProps<IDataType>['columns'] = [
 ]
 
 const PageAgenda = () => {
-  const [data, setData] = useState(null)
-  const loadData = () => {
-    webApiService.getList().then((respose) => respose).then((data) => {
-      if (data.length > 0) {
-        setData(data)
-        console.log(data)
-      }
-    })
-  }
-  useEffect(() => {
-    loadData()
-  }, [])
-
+  const { dataAgenda } = usePageContextAgenda()
   return (
     <div>
-
       <TitleComponents title='Agenda Contacto' />
       <BtnNewRecord />
       <InputSearch />
-      <TblList dataSource={data ?? []} columns={dataColumns} />
+      <TblList dataSource={dataAgenda ?? []} columns={dataColumns} />
     </div>
   )
 }

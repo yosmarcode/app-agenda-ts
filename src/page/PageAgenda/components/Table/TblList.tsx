@@ -5,7 +5,7 @@ export const TblList = ({ dataSource, columns }: { dataSource: Object | any, col
   return (
     <div style={{ paddingTop: '25px' }}>
 
-      <Table dataSource={dataSource} columns={columns} />
+      <Table dataSource={dataSource?.data ?? []} columns={columns} rowKey='id' />
 
     </div>
   )
