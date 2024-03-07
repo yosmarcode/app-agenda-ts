@@ -16,5 +16,17 @@ export const webApiService = {
     const urlApi = URL_API + 'dataUser?q=' + q
     const response = await fetch(urlApi, { method: 'GET', headers })
     return await response.json()
+  },
+  saveUserService: async (bodyUser: any) => {
+    const urlApi = URL_API + 'dataUser'
+    const response = await fetch(urlApi,
+      {
+        method: 'post',
+        body: JSON.stringify(bodyUser),
+        headers
+      })
+
+    return response.status
   }
+
 }

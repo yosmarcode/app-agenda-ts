@@ -1,13 +1,16 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react'
 import { IDataType } from '../models'
 import { webApiService } from '../../../services'
+import { INCLUDES_URL } from '../../../constants'
+import { validateEmail } from '../../../helpers/validateEmail/ValidateEmail'
 
 export const PageContextAgenda = createContext<any | null>(null)
 
 export const PageContextProviderAgenda = ({ children }: {children: ReactNode}) => {
-  const { dataAgenda, setDataAgenda, openDrawer, setOpenDreawer } = useProviderStoreAgenda()
+  const { dataAgenda, setDataAgenda, openDrawer, setOpenDreawer, formValue, setFormValue } = useProviderStoreAgenda()
   const [isData, setIsData] = useState<number>(-1)
 
+  // primer llamado de los registro
   const loadData = () => {
     setIsData(1)
     setDataAgenda({ ...dataAgenda, loading: true })
@@ -30,15 +33,42 @@ export const PageContextProviderAgenda = ({ children }: {children: ReactNode}) =
   const handleOpenDrawer = () => {
     setOpenDreawer(!openDrawer)
   }
+  // VALIDATE FORM
+  const validateForm = () => {
+    if (!formValue.avatar || !formValue.avatar.includes(INCLUDES_URL)) {
+      setFormValue({ ...formValue, isError: true })
+      return false
+    }
+    if (formValue.fullName === undefined || formValue.fullName === '') {
+      setFormValue({ ...formValue, isError: true })
+      return false
+    }
+    if (formValue.email === undefined || formValue.fullName === '' || (!validateEmail(formValue.email))) {
+      setFormValue({ ...formValue, isError: true })
+      return false
+    }
+
+    if (formValue.phone === undefined || formValue.phone === '') {
+      setFormValue({ ...formValue, isError: true })
+      return false
+    }
+
+    setFormValue({ ...formValue, isError: false })
+    return true
+  }
 
   return (
     <PageContextAgenda.Provider
       value={{
+        loadData,
         dataAgenda,
         setDataAgenda,
         openDrawer,
         setOpenDreawer,
-        handleOpenDrawer
+        handleOpenDrawer,
+        formValue,
+        setFormValue,
+        validateForm // form Validate
       }}
     >
       {isData === 1 ? children : <span>Obteniendo información...</span>}
@@ -51,13 +81,38 @@ export const useProviderStoreAgenda = () => {
     loading: false,
     data: null
   })
+
+  // Drawer
   const [openDrawer, setOpenDreawer] = useState<boolean>(false)
+
+  // formulario
+  const [formValue, setFormValue] = useState<{
+    loading: boolean
+    isError: boolean
+    id?: string | number | null
+    fullName: string
+    descriptions: string
+    email: string
+    phone: number | string
+    avatar: string}>({
+      loading: false,
+      isError: false,
+      id: '',
+      fullName: '',
+      descriptions: '',
+      email: '',
+      phone: '',
+      avatar: ''
+
+    })
 
   return {
     dataAgenda,
     setDataAgenda,
     openDrawer,
-    setOpenDreawer
+    setOpenDreawer,
+    formValue,
+    setFormValue
   }
 }
 
