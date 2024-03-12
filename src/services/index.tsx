@@ -27,6 +27,12 @@ export const webApiService = {
       })
 
     return response.status
+  },
+  deleteUserService: async (id: string | number) => {
+    const urlApi = URL_API + `dataUser/${id}`
+    const response = await fetch(urlApi, { method: 'delete', headers })
+
+    return await response.ok
   }
 
 }

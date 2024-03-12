@@ -31,6 +31,7 @@ export const PageContextProviderAgenda = ({ children }: {children: ReactNode}) =
 
   // OPEN/CLOSE DRAWER
   const handleOpenDrawer = () => {
+    resetForm()
     setOpenDreawer(!openDrawer)
   }
   // VALIDATE FORM
@@ -57,10 +58,26 @@ export const PageContextProviderAgenda = ({ children }: {children: ReactNode}) =
     return true
   }
 
+  const resetForm = () => {
+    setFormValue(
+      {
+        loading: false,
+        isError: false,
+        id: '',
+        fullName: '',
+        descriptions: '',
+        email: '',
+        phone: '',
+        avatar: ''
+      }
+    )
+  }
+
   return (
     <PageContextAgenda.Provider
       value={{
         loadData,
+        resetForm, // limpiar formulario
         dataAgenda,
         setDataAgenda,
         openDrawer,
